@@ -1219,14 +1219,309 @@
     (Следствие) \textbf{Исчисление предикатов непротиворечиво}
 
 
-%\section{Машина Тьюринга. Разрешимость теории, примеры. Задача об останове, её неразрешимость.
-%Неразрешимость исчисления предикатов.}
+\section{Машина Тьюринга. Разрешимость теории, примеры. Задача об останове, её неразрешимость.
+Неразрешимость исчисления предикатов.}
 
-%\section{ Представление чисел через натуральные (целые, рациональные, вещественные).
-%Аксиоматика Пеано. Арифметические операции (сложение, умножение, возведение в степень) в аксиоматике Пеано.
-%Доказательство коммутативности сложения.
-%Порядок теории (0, 1, 2). Теории первого порядка. Формальная арифметика. Доказательство $a=a$.
-%Арифметизация математики, формализация категорических силлогизмов, предложенная Лейбницем.}
+
+\textbf{Машина Тьюринга:}
+
+\begin{enumerate}
+    \item Внешний алфавит $q_1, \dots, q_n$, выделенный символ-заполнитель $q_\varepsilon$
+    \item Внутренний алфавит (состояний) $s_1, \dots, s_k$; $s_s$ --- начальное, $s_f$ --- допускающее, $s_r$ --- отвергающее.
+    \item Таблица переходов $\langle k, s \rangle \Rightarrow \langle k', s', \leftrightarrow \rangle$
+\end{enumerate}
+
+Состояние машины Тьюринга:
+
+\begin{enumerate}
+    \item Бесконечная лента с символом-заполнителем $q_\varepsilon$, текст конечной длины.
+    \item Головка над определённым символом.
+    \item Символ состояния (состояние в узком смысле) --- символ внутреннего алфавита.
+\end{enumerate}
+
+Язык --- множество строк
+
+Язык $L$ \textbf{разрешим}, если существует машина Тьюринга, которая для любого слова $w$ переходит в допускающее состояние, если $w \in L$,
+и в отвергающее, если $w \notin L$.
+
+Рассмотрим все возможные описания машин Тьюринга. Составим упорядоченные пары: описание машины Тьюринга и входная строка.
+Из них выделим язык останавливающихся на данном входе машин Тьюринга.
+
+\textbf{(Теорема)} Язык всех останавливающихся машин Тьюринга неразрешим.
+
+\begin{proof}От противного. Пусть $S(x,y)$ --- машина Тьюринга, определяющая, остановится ли машина $x$, примененная к строке $y$.\pause
+    \begin{center}W(x) = if (S(x,x)) \{ while (true); return 0; \} else \{ return 1; \}\end{center}\pause
+    Что вернёт $S(code(W),code(W))$?
+    \end{proof}
+
+Кодируем состояние:
+
+\begin{enumerate}
+    \item внешний алфавит: $n$ 0-местных функциональных символов $q_1, \dots, q_n$; $q_\varepsilon$ --- символ-заполнитель.
+    \item список: $\varepsilon$ и $c(l,s)$; <<abc>> представим как $c(q_a,c(q_b,c(q_c,\varepsilon)))$.
+    \item положение головки: <<$ab\underline{p}q$>> как $(c(q_b,c(q_a,\varepsilon)), c(q_p,c(q_q,\varepsilon)))$.
+    \item внутренний алфавит: $k$ 0-местных функциональных символов $s_1, \dots, s_k$. Из них выделенные $s_s$ --- начальное и
+    $s_f$ --- допускающее состояние.
+\end{enumerate}
+
+Предикатный символ $F_{x,y}(w_l,w_r,s)$: если у машины $x$ с начальной строкой $y$ состояние $s$ достижимо на строке $rev(w_l) @ w_r$. 
+Будем накладывать условия: семейство формул $C_m$. 
+Очевидно, начальное состояние достижимо:
+$$C_0 := F_{x,y}(\varepsilon,y,s_s)$$.
+
+\begin{enumerate}
+    \item Занумеруем переходы.\pause
+    \item Закодируем переход $m$: $$\langle k, s \rangle \Rightarrow \langle k', s', \rightarrow \rangle, \text{ в случае } q_k \ne q_\varepsilon$$
+    $C_m = \forall w_l.\forall w_r.F_{x,y}(w_l,c(q_k,w_r),s_s) \rightarrow F_{x,y}(c(q_{k'},w_l),w_r,s_{s'})$\\
+    (здесь требуется, чтобы под головкой находился непустой символ $q_k$, потому мы обязательно требуем, чтобы лента была
+    непуста)\pause
+    
+    \item Переход посложнее:
+    $$\langle k, s \rangle \Rightarrow \langle k', s', \leftarrow \rangle, \text{ в случае } q_k \ne q_\varepsilon$$
+    $C_m = \forall w_l.\forall w_r.\forall t.F_{x,y}(c(t,w_l),c(q_k,w_r),s_s) \rightarrow F_{x,y}(w_l,c(t,c(q_{k'},w_r)),s_{s'}) \with
+    \forall w_l.\forall w_r.F_{x,y}(\varepsilon,c(q_k,w_r),s_s) \rightarrow F_{x,y}(\varepsilon,c(q_\varepsilon,c(q_{k'},w_r)),s_{s'})$\\
+    \pause
+    \item и т.п.
+    \end{enumerate}
+
+\textbf{(Теорема)} Состояние $s$ со строкой $rev(w_l)@w_r$ достижимо тогда и только тогда, когда
+$C \vdash F_{x,y}(w_l,w_r,s)$
+
+\begin{proof}
+    $(\Leftarrow)$ Рассмотрим модель: предикат $F_{x,y}(w_l,w_r,s)$ положим истинным, если состояние достижимо. \pause
+    Это --- модель для $C$ (по построению $C_m$). \pause
+    Значит, доказуемость влечёт истинность (по корректности). \pause
+    
+    $(\Rightarrow)$ 
+
+    Докажем, что если состояние $s$ со строкой $\text{rev}(w_l)@w_r$ достижимо, то 
+\[
+C \vdash F_{x,y}(w_l, w_r, s).
+\]
+
+Проведём \textbf{индукцию по длине лога исполнения} $k$ --- количеству шагов от начального состояния до состояния $s$.
+
+\noindent \textbf{База индукции:} $k = 0$.
+
+Состояние $s$ --- начальное. В этом случае $s = s_s$, $w_l = \varepsilon$, $w_r = y$.
+По определению $C_0$ имеем:
+\[
+C_0 := F_{x,y}(\varepsilon, y, s_s).
+\]
+Так как $C_0$ входит в конъюнкцию $C$, то
+\[
+C \vdash F_{x,y}(\varepsilon, y, s_s).
+\]
+База доказана.
+
+\noindent \textbf{Шаг индукции:} $k = m + 1$.
+
+Предположим, что состояние $s$ достижимо за $m+1$ шагов. Тогда существует состояние $s'$ со строкой $\text{rev}(w_l')@w_r'$, которое достижимо за $m$ шагов, и переход из $s'$ в $s$ за один шаг.
+
+По \textbf{предположению индукции} для состояния $s'$:
+\[
+C \vdash F_{x,y}(w_l', w_r', s').
+\]
+
+Поскольку переход из $s'$ в $s$ возможен, существует формула $C_t$ в семействе $C$, которая кодирует этот переход. Формально, $C_t$ имеет вид:
+\[
+F_{x,y}(w_l', w_r', s') \rightarrow F_{x,y}(w_l, w_r, s).
+\]
+
+Применяя \textit{modus ponens} к $C_t$ и выводимой формуле $F_{x,y}(w_l', w_r', s')$, получаем:
+\[
+C \vdash F_{x,y}(w_l, w_r, s).
+\]
+
+\end{proof}
+
+\textbf{(Неразрешимость ИП)}
+
+Язык всех доказуемых формул исчисления предикатов неразрешим.
+
+\begin{proof} Пусть существует машина Тьюринга, разрешающая любую формулу. \pause%Тогда покажем, что задача останова разрешима.\pause
+    На её основе тогда несложно построить некоторую машину Тьюринга, перестраивающую любую машину $S$ (с допускающим состоянием $s_f$ и входом $y$) 
+    в её ограничения $C$ и разрешающую формулу ИП $C \rightarrow \exists w_l.\exists w_r.F_{S,y}(w_l,w_r,s_f)$. 
+    Эта машина разрешит задачу останова.
+    \end{proof}
+
+\section{ Представление чисел через натуральные (целые, рациональные, вещественные).
+Аксиоматика Пеано. Арифметические операции (сложение, умножение, возведение в степень) в аксиоматике Пеано.
+Доказательство коммутативности сложения.
+Порядок теории (0, 1, 2). Теории первого порядка. Формальная арифметика. Доказательство $a=a$.
+Арифметизация математики, формализация категорических силлогизмов, предложенная Лейбницем.}
+
+\textbf{(Представление чисел через натуральные)}
+
+\begin{enumerate}
+    \item Рациональные ($\mathbb{Q}$).\pause
+    
+          $Q = \mathbb{Z} \times \mathbb{N}$ --- множество всех простых дробей.\pause
+    
+          $\langle p,q \rangle$ --- то же, что $\frac{p}{q}$ \pause
+    
+          $\langle p_1,q_1 \rangle \equiv \langle p_2, q_2 \rangle$, если $p_1q_2 = p_2q_1$\pause
+    
+    \vspace{0.1cm}
+          $\mathbb{Q} = Q/_\equiv$
+    
+    \item Вещественные ($\mathbb{R}$). \pause $X = \{ A, B \}$, где $A,B \subseteq \mathbb{Q}$ --- дедекиндово сечение, если:\pause
+    \begin{enumerate}
+    \item $A\cup B = \mathbb{Q}$\pause
+    \item Если $a \in A$, $x \in \mathbb{Q}$ и $x \le a$, то $x \in A$\pause
+    \item Если $b \in B$, $x \in \mathbb{Q}$ и $b \le x$, то $x \in B$\pause
+    \item $A$ не содержит наибольшего.\pause
+    \end{enumerate}\\
+
+\end{enumerate}
+
+$N$ (или, более точно, $\langle N, 0, (')\rangle$) \emph{соответствует} \textbf{аксиоматике Пеано}, 
+  если следующее определено/выполнено:\pause
+  \begin{enumerate}
+     \item Операция <<штрих>> $('): N \to N$, причём нет $a,b \in N$, что $a \ne b$, но $a' = b'$.\pause
+           Если $x = y'$, то $x$ назовём следующим за $y$, а $y$ --- предшествующим $x$.\pause
+     \item Константа $0 \in N$: нет $x \in N$, что $x' = 0$.\pause
+     \item Индукция. Каково бы ни было свойство (<<предикат>>) $P: N \to V$, если:
+           \begin{enumerate}
+           \item $P(0)$
+           \item При любом $x\in N$ из $P(x)$ следует $P(x')$
+           \end{enumerate}
+           то при любом $x \in N$ выполнено $P(x)$.
+  \end{enumerate}
+
+
+(Теорема) 0 единственен: если $t$ таков, что при любом $y$ 
+выполнено $y' \ne t$, то $t = 0$.\\
+
+\begin{proof}
+    \begin{itemize}
+    \item Определим $P(x)$ как <<либо $x = 0$, либо $x = y'$ для некоторого $y \in N$>>.\pause
+    \begin{enumerate}
+    \item $P(0)$ выполнено, так как $0 = 0$.\pause
+    \item Если $P(x)$ выполнено, то возьмём $x$ в качестве $y$: тогда для $P(x')$
+    будет выполнено $x' = y'$.\pause
+    \end{enumerate}
+    Значит, $P(x)$ для любого $x \in N$.\pause
+    
+    \item Рассмотрим $P(t)$: <<либо $t = 0$, либо $t = y'$ для некоторого $y \in N$>>.
+    Но так как такого $y$ нет, то неизбежно $t = 0$.
+    \end{itemize}
+\end{proof}
+
+\textbf{(Определения)}
+
+$1 = 0'$, $2 = 0''$, $3 = 0'''$, $4 = 0''''$, $5 = 0'''''$, $6 = 0''''''$,
+$7 = 0'''''''$, $8 = 0''''''''$, $9 = 0'''''''''$
+
+\vspace{-0.3cm}
+$$a + b = \left\{ \begin{array}{ll} a, & \mbox{если } b = 0\\
+                                    (a + c)', & \mbox{если } b = c'
+                  \end{array}\right.$$
+
+                  \vspace{-0.3cm}
+$$a \cdot b = \left\{ \begin{array}{ll} 0, & \mbox{если } b = 0\\
+                                    a \cdot c + a, & \mbox{если } b = c'
+                  \end{array}\right.$$
+
+\textbf{Коммутативность сложения}
+
+(Лемма) $a + 0 = 0 + a$
+
+\begin{proof} Пусть $P(x)$ --- это $x + 0 = 0 + x$.
+    \begin{enumerate}\pause
+    \item Покажем $P(0)$. $0 + 0 = 0 + 0$ \pause
+    \item Покажем, что если $P(x)$, то $P(x')$. Покажем $P(x')$, то есть $x' + 0 = \dots$ \pause
+    
+    \begin{center}
+      \begin{tabular}{lrl} %Равенство & обоснование \\\hline
+                          $\dots = x'$ & $a=x',b=0$: & $x' + 0 \Rightarrow x'$ \\\pause
+                          $\dots = (x)'$ & \\ \pause
+                          $\dots = (x + 0)'$ & $a=x,b=0$: &$(x + 0) \Leftarrow (x)$ \\ \pause
+                          $\dots = (0 + x)'$ & $P(x)$: &$(x + 0) \Rightarrow (0 + x)$ \\ \pause
+                          $\dots = 0 + x'$ & $a=0,b=x'$: &$0 + x' \Leftarrow (0 + x)'$
+       \end{tabular}
+    \end{center}
+    \end{enumerate}\pause
+    Значит, $P(a)$ выполнено для любого $a \in N$.
+    \end{proof}
+
+(Лемма) $a + b' = a' + b$
+
+\begin{proof} $P(x)$ --- это $a + x' = a' + x$\pause
+    \begin{enumerate}
+    \item $a + 0' = (a + 0)' = (a)' = a' = a' + 0$\pause
+    \item Покажем, что $P(x')$ следует из $P(x)$: $a + x'' = (a + x')' = (a' + x)' = a' + x'$
+    \end{enumerate}
+\end{proof}
+
+(Теорема) $a + b = b + a$
+
+\begin{proof}[Доказательство индукцией по $b$: $P(x)$ --- это $a + x = x + a$]
+    \begin{enumerate}
+    \item $a + 0 = 0 + a$ (лемма 1)\pause
+    \item $a + x' = (a + x)' = (x + a)' = x + a' = x' + a$
+    \end{enumerate}
+\end{proof}
+
+\textbf{Теорией первого порядка} назовём исчисление предикатов с дополнительными (<<нелогическими>>
+или <<математическими>>):
+\begin{itemize}
+\item предикатными и функциональными символами;
+\item аксиомами.
+\end{itemize}
+
+Сущности, взятые из исходного исчисления предикатов, назовём логическими\\
+
+
+\begin{tabular}{llll}
+    Порядок & Кванторы & Формализует суждения\dots & Пример\\\hline
+    нулевой & запрещены & об отдельных значениях & И.В.\\
+    первый & по предметным переменным & о множествах & И.П.\\
+    %    &   & $S = \{ t\ |\ \psi[x := t] \}$ \\
+        &   \multicolumn{2}{l}{\color{olive}$\{2,3,5,7,\dots\} = \{ t\ |\ \forall p.\forall q.(p \ne 1 \with q \ne 1) \rightarrow (t \ne p\cdot q)\}$}\\
+    второй & по предикатным переменным & о множествах множеств & Типы\\
+        &   \multicolumn{2}{l}{\color{olive}$S = \{ \{t\ |\ P(t)\}\ |\ \varphi[p := P] \}$}\\
+     & \dots 
+    \end{tabular}
+\pause\vspace{0.3cm}    
+
+\textbf{Формальная арифметика} --- теория первого порядка, со следующими добавленными нелогическими \dots
+\begin{itemize}
+\item двухместными функциональными символами $(+)$, $(\cdot)$; одноместным функциональным символом $(')$, 
+нульместным функциональным символом $0$;\pause
+\item двухместным предикатным символом $(=)$;\pause
+\item восемью нелогическими \emph{аксиомами}:\vspace{0.1cm}
+\begin{tabular}{ll}
+(A1) $a=b \to a=c \to b=c$             &(A5) $a+0 = a$                     \\
+(A2) $a=b \to a'=b'$                   &(A6) $a+b' = (a+b)'$               \\
+(A3) $a'=b' \to a=b$                   &(A7) $a\cdot 0 = 0$                \\
+(A4) $\neg a' = 0$                     &(A8) $a\cdot b' = a \cdot b + a$
+\end{tabular}\pause
+\item нелогической схемой аксиом индукции $\psi[x:=0]\with(\forall x.\psi\to \psi[x:=x'])\to \psi$ с метапеременными $x$ и $\psi$.
+\end{itemize}
+
+\textbf{Доказательство a = a}
+
+Пусть $\top ::= 0=0\to 0=0 \to 0=0$, тогда:
+
+\begin{tabular}{lll}
+(1) & $a=b\to a=c \to b=c$ & (Акс. А1)\\
+(2) & $(a=b\to a=c \to b=c) \to \top \to (a=b\to a=c \to b=c)$ & (Сх. акс. 1)\\
+(3) & $\top \to (a=b\to a=c \to b=c)$ & (M.P. 1, 2)\\
+(4) & $\top \to (\forall c.a = b\to a = c \to b = c)$ & (Введ. $\forall$)\\\pause
+(5) & $\top \to (\forall b.\forall c.a = b\to a = c \to b = c)$ & (Введ. $\forall$)\\
+(6) & $\top \to (\forall a.\forall b.\forall c.a = b\to a = c \to b = c)$ & (Введ. $\forall$)\\\pause
+(7) & $\top$ & (Сх. акс 1)\\
+(8) & $(\forall a.\forall b.\forall c.a = b\to a = c \to b = c)$ & (M.P. 7, 6)\\\pause
+(9) & $(\forall a.\forall b.\forall c.a = b\to a = c \to b = c) \to $\\
+    & $\to (\forall b.\forall c.a+0 = b\to a+0 = c \to b = c)$ & (Сх. акс. 11)\\\pause
+(10) & $\forall b.\forall c.a+0 = b\to a+0 = c \to b = c$ & (M.P. 8, 9)\\\pause
+(12) & $\forall c.a+0 = a\to a+0 = c \to a = c$ & (M.P. 10, 11)\\\pause
+(14) & $a+0 = a\to a+0 = a \to a = a$ & (M.P. 12, 13)\\\pause
+(15) & $a+0 = a$ & (Акс. А5)\\
+(16) & $a+0 = a \to a = a$ & (M.P. 15, 14)\\
+(17) & $a = a$ & (M.P. 15, 16)
+\end{tabular}
 
 %\section{Примитивно-рекурсивные и рекурсивные функции.
 %Функции вычисления простых чисел. Частичный логарифм.
@@ -1236,19 +1531,339 @@
 %\section{Представимость примитивов $N$, $Z$, $U$, $S$. Бета-функция Гёделя.
 %Представимость $R$ и $M$, представимость рекурсивных функций в формальной арифметике.}
 
-%\section{Гёделева нумерация. Рекурсивность представимых в формальной арифметике функций.
-%Функции $W_1$ и $W_2$, их представления $\omega_1$, $\omega_2$, самоприменимость.}
+\section{Гёделева нумерация. Рекурсивность представимых в формальной арифметике функций.
+Функции $W_1$ и $W_2$, их представления $\omega_1$, $\omega_2$, самоприменимость.}
 
-%\section{ Непротиворечивость (эквивалентные определения), $\omega$-не\-про\-ти\-во\-ре\-чи\-вость.
-%Первая теорема Гёделя о неполноте арифметики.
-%Формулировка первой теоремы Гёделя о неполноте арифметики в форме Россера.
-%Синтаксическая и семантическая неполнота арифметики.
-%Неполнота расширений формальной арифметики.
-%Ослабленные варианты: арифметика Пресбургера, система Робинсона.}
+Фиксируем $f$ и $x_1, x_2, \dots, x_n$. Обозначим $y = f(x_1,x_2,\dots,x_n)$. \pause
+По представимости нам известна $\varphi$, что $\vdash \varphi(\overline{x_1},\overline{x_2},\dots,\overline{x_n},\overline{y})$. \pause
+Давайте просто переберём все результаты и доказательства!\pause
 
-%\section{ Вторая теорема Гёделя о неполноте арифметики, $Consis$.
-%Лемма об автоссылках. Условия Гильберта-Бернайса-Лёба. Неразрешимость формальной арифметики.
-%Теорема Тарского о невыразимости истины.}
+\begin{enumerate}
+\item Закодируем доказательства натуральными числами.\pause
+\item Напишем рекурсивную функцию, проверяющую доказательства на корректность.\pause
+\item Параллельный перебор значений и доказательств: $s = 2^y \cdot 3^p$. Переберём все $s$, по $s$ получим $y$ и $p$.
+Проверим, что $p$ --- код доказательства $\vdash \varphi(\overline{x_1},\overline{x_2},\dots,\overline{x_n},\overline{y})$.
+\end{enumerate}
+
+\textbf{Геделева нумерация}
+
+\begin{enumerate}
+    \item Отдельный символ.\vspace{0.2cm}
+    
+
+\begin{tabular}{lc|lc||cll}
+    Номер & Символ & Номер & Символ & Имя & $k,n$ & Гёделев номер\\
+    3 & ( &               17 & $\&$ &  0 & $0,0$ & $27 + 6$\\
+    5 & ) &               19 & $\forall$ & $(')$ & $0,1$ & $27 + 6 \cdot 3$\\
+    7 & , &               21 & $\exists$ & $(+)$ & $0,2$ & $27 + 6 \cdot 9$\\
+    9 & . &               23 & $\vdash$ & $(\cdot)$ & $1,2$ & $27 + 6 \cdot 2 \cdot 9$\\
+    11 & $\neg$ &         $25 + 6\cdot k$ & $x_k$ & $(=)$ & $0,2$ & $29 + 6 \cdot 9$\\
+    13 & $\rightarrow$ &  $27 + 6\cdot 2^k \cdot 3^n$ & $f_k^n$\\
+    15 & $\vee$ &         $29 + 6\cdot 2^k \cdot 3^n$ & $P_k^n$ 
+\end{tabular}
+
+\item Формула. $\phi \equiv s_0s_1\dots s_{n-1}$. Гёделев номер: $\ulcorner\phi\urcorner = 2^{\ulcorner s_0\urcorner}\cdot 3^{\ulcorner s_1\urcorner} 
+\cdot \dots \cdot p_{n-1}^{\ulcorner s_{n-1}\urcorner}$.\pause
+
+\item Доказательство. $\Pi = \delta_0\delta_1\dots\delta_{k-1}$, его гёделев номер: $\ulcorner\Pi\urcorner =
+2^{\ulcorner \delta_0\urcorner}\cdot 3^{\ulcorner \delta_1\urcorner} \cdot \dots \cdot p_{k-1}^{\ulcorner \delta_{k-1}\urcorner}$
+\end{enumerate}
+
+(Лемма) Следующая функция рекурсивна:
+$$\text{proof}(f,x_1,x_2,\dots,x_n,y,p) = \left\{\begin{array}{ll} 
+0, & \mbox{если} \vdash\phi(\overline{x_1},\overline{x_2},\dots,\overline{x_n},\overline{y}),\\
+   & p \mbox{ --- гёделев номер вывода}, f = \ulcorner\phi\urcorner \\ 
+1, & \mbox{иначе}
+\end{array}\right.$$\vspace{-0.1cm}
+
+\begin{proof}
+    \begin{enumerate}
+    \item Проверка доказательства вычислима.\pause
+    \item Согласно тезису Чёрча, любая вычислимая функция
+    вычислима с помощью рекурсивных функций.
+    \end{enumerate}
+    \end{proof}
+
+    Следующие функции рекурсивны:
+\begin{enumerate}
+\item Функции $\text{plog}_k(n) = \max\{p: n \divisible k^p\}$, $\text{fst}(x) = \text{plog}_2(x)$ и $\text{snd}(x) = \text{plog}_3(x)$.\pause
+\item Числовые литералы: $\overline{k}: \mathbb{N}_0 \rightarrow \mathbb{N}_0$, $\overline{k}(x) = k$.\pause
+\end{enumerate}
+
+\textbf{(Теорема)} Любая представимая в Ф.А. функция рекурсивна(может быть построена через примитивы).
+
+\begin{proof}
+    Пусть заданы $x_1,x_2,\dots,x_n$. Ищем $\langle y, p\rangle$, 
+    что $\text{proof}(\ulcorner\varphi\urcorner,x_1,x_2,\dots,x_n,y,p)=1$, \pause
+    напомним: $y = f(x_1,x_2,\dots,x_n)$, $p = \ulcorner\Pi\urcorner$,
+    $\Pi$ --- доказательство $\varphi(\overline{x_1},\overline{x_2},\dots,\overline{x_n},\overline{y})$. \pause
+    $$f = S \langle \text{fst}, M\langle S \langle \text{proof}, \overline{\ulcorner\varphi\urcorner}, U^1_{n+1}, U^2_{n+1}, \dots, U^n_{n+1}, 
+      S \langle \text{fst},U^{n+1}_{n+1}\rangle, S\langle \text{snd}, U^{n+1}_{n+1}\rangle \rangle \rangle \rangle$$
+    \end{proof}
+
+\textbf{(Теорема)} Формальная арифметика корректна.
+
+\begin{proof}Свойства аксиом $A1\dots A8$ очевидны. 
+
+    Доказательство схемы аксиом индукции:
+    Фиксируем некоторую формулу $\psi$, 
+и рассмотрим схему аксиом $$\psi(0) \with (\forall x.\psi(x) \rightarrow \psi(x')) \rightarrow \psi(x)$$
+
+Разберём случаи:
+\begin{enumerate}
+\item $\llbracket\psi(0)\rrbracket = \text{Л}$ либо 
+$\llbracket\forall x.\psi(x) \rightarrow \psi(x')\rrbracket = \text{Л}$. Тогда антецедент импликации ложен 
+и формула истинна.
+\item Антецедент импликации истинен. Тогда докажем индукцией по $x$, что $\llbracket \psi(x) \rrbracket = \text{И}$.
+База:
+$x = 0$.
+
+        Переход: $x := s'$. Тогда $s'$ раз применяем переход $$\llbracket \theta_0(x) = \theta_1(x) \rightarrow \theta_0(x') = \theta_1(x') \rrbracket^{x := \overline{0\dots s}} = \text{И}$$
+        отсюда $$\llbracket\theta_0(x') = \theta_1(x') \rrbracket^{x := s} = \llbracket\theta_0(x) = \theta_1(x) \rrbracket^{x := s+1} = \text{И}$$ 
+    \end{enumerate}
+\end{proof} 
+
+\textbf{Определения}
+
+Пусть $\xi$ --- формула с единственной свободной
+переменной $x_1$. Тогда:
+$\langle\ulcorner \xi \urcorner,p\rangle \in W_1$, если $\vdash \xi(\overline{\ulcorner \xi \urcorner})$ и $p$ --- номер доказательства.
+
+
+Отношение $W_1$ рекурсивно, поэтому выражено в Ф.А. формулой $\omega_1$ со свободными переменными $x_1$ и $x_2$, причём:
+\begin{enumerate}
+\item $\vdash \omega_1(\overline{\ulcorner \varphi \urcorner},\overline{p})$, если $p$ --- гёделев номер
+доказательства самоприменения $\varphi$;
+\item $\vdash \neg\omega_1(\overline{\ulcorner \varphi \urcorner},\overline{p})$ иначе.
+\end{enumerate}
+
+Пусть $\langle \ulcorner\xi\urcorner,p\rangle \in W_2$, если $\vdash\neg\xi(\overline{\ulcorner\xi\urcorner})$ и $p$ --- номер доказательства.
+Пусть $\omega_2$ выражает $W_2$ в формальной арифметике.
+
+\section{Непротиворечивость (эквивалентные определения), $\omega$-не\-про\-ти\-во\-ре\-чи\-вость.
+Первая теорема Гёделя о неполноте арифметики.
+Формулировка первой теоремы Гёделя о неполноте арифметики в форме Россера.
+Синтаксическая и семантическая неполнота арифметики.
+Неполнота расширений формальной арифметики.
+Ослабленные варианты: арифметика Пресбургера, система Робинсона.}
+
+Определим формулу $\sigma(x_1) := \forall p.\neg\omega_1(x_1,p)$(x1 несамоприменима).
+
+Если для любой формулы $\phi(x)$ из $\vdash\phi(0)$, $\vdash\phi(\overline{1})$,
+$\vdash\phi(\overline{2})$, $\dots$ выполнено $\not\vdash\exists x.\neg\phi(x)$, 
+то теория \textbf{омега-непротиворечива}.
+
+\textbf{Первая теорема Гёделя о неполноте арифметики}
+\begin{itemize}
+    \item Если формальная арифметика непротиворечива, то $\not\vdash\sigma(\overline{\ulcorner\sigma\urcorner})$.
+    \item Если формальная арифметика $\omega$-непротиворечива, то $\not\vdash\neg\sigma(\overline{\ulcorner\sigma\urcorner})$.
+\end{itemize}\\
+
+\begin{proof}
+    \begin{itemize}
+    \item Пусть $\vdash\sigma(\overline{\ulcorner\sigma\urcorner})$. Значит, $p$ --- номер доказательства. \pause Тогда
+    $\langle\ulcorner\sigma\urcorner,p\rangle \in W_1$. \pause Тогда $\vdash\omega_1(\overline{\ulcorner\sigma\urcorner},\overline{p})$. \pause 
+    Тогда $\vdash\exists p.\omega_1(\overline{\ulcorner\sigma\urcorner},p)$. \pause То есть
+    $\vdash\neg\forall p.\neg\omega_1(\overline{\ulcorner\sigma\urcorner},p)$. \pause То есть $\vdash\neg\sigma(\overline{\ulcorner\sigma\urcorner})$. Противоречие.
+    \pause
+    \item Пусть $\vdash\neg\sigma(\overline{\ulcorner\sigma\urcorner})$. \pause То есть $\vdash\exists p.\omega_1(\overline{\ulcorner\sigma\urcorner},p)$.
+    \begin{itemize}
+    \item
+    \pause Но найдётся ли натуральное число $p$, что $\vdash\omega_1(\overline{\ulcorner\sigma\urcorner},\overline{p})$?
+    \pause Пусть нет. То есть $\vdash\neg\omega_1(\overline{\ulcorner\sigma\urcorner},\overline{0})$,
+                              $\vdash\neg\omega_1(\overline{\ulcorner\sigma\urcorner},\overline{1})$, 
+                              \dots \pause По $\omega$-непротиворечивости $\not\vdash\exists p.\neg\neg\omega_1(\overline{\ulcorner\sigma\urcorner},p)$. \pause
+    \end{itemize}
+           Значит, найдётся натуральное $p$, что $\vdash\omega_1(\overline{\ulcorner\sigma\urcorner},\overline{p})$. \pause 
+    То есть, $\langle\ulcorner\sigma\urcorner, p\rangle\in W_1$. \pause
+    То есть, $p$ --- доказательство самоприменения $\sigma$: $\vdash\sigma(\overline{\ulcorner\sigma\urcorner})$. \pause Противоречие.
+    \end{itemize}
+\end{proof}
+
+\textbf{Семантически полная теория} --- теория, в которой любая общезначимая формула доказуема.\\
+\textbf{Синтаксически полная теория} --- теория, в которой для каждой формулы $\alpha$ выполнено $\vdash\alpha$ или $\vdash\neg\alpha$.
+
+\textbf{(Теорема)} Формальная арифметика с классической моделью семантически неполна.
+
+\begin{proof}
+    Рассмотрим Ф.А. с классической моделью. \pause
+    Из теоремы Гёделя имеем $\not\vdash\sigma(\overline{\ulcorner\sigma\urcorner})$. \pause
+    Рассмотрим $\sigma(\overline{\ulcorner\sigma\urcorner}) \equiv \forall p.\neg\omega_1(\overline{\ulcorner\sigma\urcorner},p)$:
+   нет числа $p$, что $p$ --- номер доказательства $\sigma(\overline{\ulcorner\sigma\urcorner})$. \pause 
+    То есть, $\llbracket \forall p.\neg\omega_1(\overline{\ulcorner\sigma\urcorner},p) \rrbracket = \text{И}$. \pause
+    То есть, $\models \sigma(\overline{\ulcorner\sigma\urcorner})$.
+\end{proof}
+
+\textbf{Первая теорема Гёделя о неполноте в форме Россера}
+
+$\theta_1\le\theta_2 \equiv (\exists p.p+\theta_1=\theta_2)\quad\quad\theta_1<\theta_2\equiv\theta_1\le\theta_2\with\neg\theta_1=\theta_2$
+
+Рассмотрим $\rho(x_1) = \forall p.\omega_1(x_1,p)\rightarrow\exists q.q \le p \with \omega_2(x_1,q)$. \pause
+Тогда $\not\vdash\rho(\overline{\ulcorner\rho\urcorner})$ и $\not\vdash\neg\rho(\overline{\ulcorner\rho\urcorner})$. \pause
+$\rho(\overline{\ulcorner\rho\urcorner})$: <<Меня легче опровергнуть, чем доказать>>\\
+
+\textbf{О сужениях Ф.А.}
+
+Теория $\mathcal{S}$ --- расширение теории $\mathcal{T}$, если
+из $\vdash_\mathcal{T} \alpha$ следует $\vdash_\mathcal{S} \alpha$
+
+Теория $\mathcal{S}$ --- рекурсивно-аксиоматизируемая, если найдётся теория $\mathcal{S'}$ с тем же языком, что:
+\begin{enumerate}
+\item $\vdash_\mathcal{S} \alpha$ тогда и только тогда, когда $\vdash_\mathcal{S'} \alpha$;
+\item Множество аксиом теории $\mathcal{S'}$ рекурсивно.
+\end{enumerate}
+
+\textbf{(Теорема)}Если $\mathcal{S}$ --- непротиворечивое рекурсивно-аксиоматизируемое расширение формальной арифметики, то
+в ней можно доказать аналоги теорем Гёделя о неполноте арифметики.
+
+Теория первого порядка, использующая нелогические функциональные символы $0$, $(+)$ и $(\cdot)$, нелогический
+предикатный символ $(=)$ и следующие нелогические аксиомы, называется \textbf{системой Робинсона}. Она оказывается неполной.
+
+\vspace{-0.4cm}
+$$\begin{array}{ll}
+a = a & a = b \rightarrow b = a \\
+a = b \rightarrow b = c \rightarrow a = c & a = b \rightarrow a' = b' \\
+a' = b' \rightarrow a = b & \neg 0 = a' \\
+a = b \rightarrow a + c = b + c \with c + a = c + b & a = b \rightarrow a \cdot c = b \cdot c \with c \cdot a = c \cdot b \\
+\neg a = 0 \rightarrow \exists b. a = b' & a + 0 = a\\
+a + b' = (a + b)' & a \cdot 0 = 0 \\
+a \cdot b' = a \cdot b + a 
+\end{array}$$
+
+Теория первого порядка, использующая нелогические функциональные символы $0$, $1$, $(+)$, нелогический
+предикатный символ $(=)$ и следующие нелогические аксиомы, называется \textbf{арифметикой Пресбургера}. Она уже и семантически, и синтаксически полна.
+
+$$\begin{array}{l}
+\neg (0 = x + 1) \\
+x + 1 = y + 1 \rightarrow x = y\\
+x + 0 = x \\
+x + (y + 1) = (x + y) + 1\\
+(\varphi(0) \with \forall x.\varphi(x) \rightarrow \varphi(x+1)) \rightarrow \forall y.\varphi(y)
+\end{array}$$
+
+\section{Вторая теорема Гёделя о неполноте арифметики, $Consis$.
+Лемма об автоссылках. Условия Гильберта-Бернайса-Лёба. Неразрешимость формальной арифметики.
+Теорема Тарского о невыразимости истины.}
+
+(Лемма) $\vdash 1=0$ тогда и только тогда, когда $\vdash\alpha$ при любом $\alpha$(очевидно из принципа взрыва).
+
+Обозначим за $\psi(x,p)$ формулу, выражающую в формальной арифметике рекурсивное
+отношение Proof: $\langle \ulcorner\xi\urcorner,p\rangle \in \text{Proof}$, если $p$ --- гёделев номер
+доказательства $\xi$. \pause\\
+Обозначим $\pi(x)\equiv\exists p.\psi(x,p)$
+
+Формулой \textbf{Consis} назовём формулу
+$\neg \pi(\overline{\ulcorner 1=0 \urcorner})$
+
+Будем говорить, что формула $\psi$, выражающая отношение Proof, 
+формула $\pi$ и формула Consis соответствуют
+\textbf{условиям выводимости Гильберта-Бернайса-Лёба}, если следующие условия выполнены для любой формулы $\alpha$:
+
+\begin{enumerate}
+\item $\vdash \alpha$ влечет $\vdash \pi(\overline{\ulcorner\alpha\urcorner})(\text{доказуема формула что доказуема } \alpha)$
+\item $\vdash \pi (\overline{\ulcorner\alpha\urcorner}) \rightarrow \pi(\overline{\ulcorner\pi(\overline{\ulcorner\alpha\urcorner})\urcorner})$
+\item $\vdash \pi (\overline{\ulcorner\alpha\rightarrow \beta\urcorner}) \rightarrow \pi(\overline{\ulcorner\alpha\urcorner}) \rightarrow \pi(\overline{\ulcorner\beta\urcorner})$
+\end{enumerate}
+
+\textbf{(Лемма об автоссылках)} Для любой формулы $\phi(x_1)$ можно построить 
+такую замкнутую формулу $\alpha$ (не использующую неаксиоматических предикатных
+и функциональных символов), что $\vdash \phi(\overline{\ulcorner\alpha\urcorner}) \leftrightarrow \alpha$ (найдется такая виртуалка, в которой программа выполнится так же, как и нативно).
+
+\textbf{(Первая теорема Гёделя в УГБЛ)} Существует такая замкнутая формула $\gamma$, что если Ф.А. непротиворечива, то 
+$\not\vdash \gamma$, а если Ф.А. $\omega$-непротиворечива, то и $\not\vdash\neg\gamma$.
+
+\begin{proof}Рассмотрим $\phi(x_1) \equiv \neg\pi(x_1)$. Тогда по лемме об автоссылках существует
+    $\gamma$, что $\vdash \gamma \leftrightarrow \neg\pi(\overline{\ulcorner\gamma\urcorner})$.
+    
+    \begin{itemize}
+    \item Предположим, что $\vdash \gamma$. Тогда $\vdash \gamma \rightarrow \neg\pi(\overline{\ulcorner\gamma\urcorner})$, то есть $\not\vdash\gamma$
+    \item Предположим, что $\vdash \neg\gamma$. Тогда $\vdash \pi(\overline{\ulcorner\gamma\urcorner})$,
+    то есть $\vdash \exists p.\psi(\overline{\ulcorner\gamma\urcorner},p)$. Тогда по $\omega$-непротиворечивости
+    найдётся $p$, что $\vdash \psi(\overline{\ulcorner\gamma\urcorner},\overline{p})$, то есть $\vdash \gamma$.
+    \end{itemize}
+\end{proof}
+
+\textbf{(Вторая теорема Гёделя)} Если Consis доказуем, то формальная арифметика противоречива
+
+\begin{proof}(неформально) \pause(Вкратце - если бы $\sigma(\overline{\ulcorner\sigma\urcorner})$ был доказуем, то получалось бы противоречие, 
+    тк $\sigma(\overline{\ulcorner\sigma\urcorner})$ говорит о своей недоказуемости).
+    Формулировка 1 теоремы Гёделя о неполноте арифметики: 
+    <<если Ф.А. непротиворечива, то недоказуемо $\sigma(\overline{\ulcorner\sigma\urcorner})$>>. \pause
+    То есть, $\forall p.\neg\omega_1(\overline{\ulcorner\sigma\urcorner},p)$. \pause То есть, 
+    если $\text{Consis}$, то $\sigma(\overline{\ulcorner\sigma\urcorner})$. \pause
+    То есть, если $\text{Consis}$, то $\sigma(\overline{\ulcorner\sigma\urcorner})$, --- и это можно доказать,
+    то есть $\vdash\text{Consis}\rightarrow\sigma(\overline{\ulcorner\sigma\urcorner})$. \pause Однако
+    если формальная арифметика непротиворечива, то $\not\vdash\sigma(\overline{\ulcorner\sigma\urcorner})$.
+\end{proof}
+
+\begin{proof}(формально) \pause
+    \begin{enumerate}
+        \item Пусть $\gamma$ таково, что $\vdash \gamma \leftrightarrow \neg\pi(\overline{\ulcorner\gamma\urcorner})$.
+        \item Покажем $\pi(\overline{\ulcorner\gamma\urcorner})\vdash \pi(\overline{\ulcorner 1=0\urcorner})$. 
+        
+        \begin{enumerate}
+        \item По условию 2, $\vdash \pi(\overline{\ulcorner\gamma\urcorner}) \rightarrow \pi(\overline{\ulcorner\pi(\overline{\ulcorner\gamma\urcorner})\urcorner})$.
+        По теореме о дедукции $\pi(\overline{\ulcorner\gamma\urcorner})\vdash \pi(\overline{\ulcorner\pi(\overline{\ulcorner\gamma\urcorner})\urcorner})$;
+        
+        \item Так как $\vdash \pi(\overline{\ulcorner\gamma\urcorner})\rightarrow\neg\gamma$, то 
+        по условию 1 $\vdash \pi(\overline{\ulcorner\pi(\overline{\ulcorner\gamma\urcorner})\rightarrow\neg\gamma\urcorner})$;
+        
+        \item По условию 3, $\pi(\overline{\ulcorner\gamma\urcorner})\vdash \pi(\overline{\ulcorner\pi(\overline{\ulcorner\gamma\urcorner})\rightarrow\neg\gamma\urcorner})\rightarrow
+        \pi(\overline{\ulcorner\pi(\overline{\ulcorner\gamma\urcorner})\urcorner}) \rightarrow 
+        \pi(\overline{\ulcorner\neg\gamma\urcorner})$;
+        
+        \item Таким образом, $\pi(\overline{\ulcorner\gamma\urcorner})\vdash\pi(\overline{\ulcorner\neg\gamma\urcorner})$;
+        
+        \item Однако $\vdash \gamma\rightarrow\neg\gamma\rightarrow 1=0$. Условие 3 (применить два раза) даст $\pi(\overline{\ulcorner\gamma\urcorner})\vdash \pi(\overline{\ulcorner 1=0 \urcorner})$.
+        \end{enumerate}
+        
+        \item $\vdash \neg\pi(\overline{\ulcorner 1=0 \urcorner})\rightarrow\neg\pi(\overline{\ulcorner\gamma\urcorner})$ (т. о дедукции, контрапозиция).
+        \item $\vdash \neg\pi(\overline{\ulcorner 1=0 \urcorner})\rightarrow\gamma$ (определение $\gamma$)(какой бы $\gamma$ мы не взяли, мы его можем доказать, что влечет противоречивость теории).
+        \end{enumerate}
+\end{proof}
+
+$\text{Д}_\mathcal{S} = \{ \ulcorner\alpha\urcorner\ |\ \vdash_\mathcal{S}\alpha \}$; 
+$\text{И}_\mathcal{S} = \{ \ulcorner\alpha\urcorner\ |\ \llbracket\alpha\rrbracket_\mathcal{S} = \text{И} \}$
+
+(Лемма) Пусть $D(\ulcorner\alpha\urcorner) = \ulcorner\alpha(\overline{\ulcorner\alpha\urcorner})\urcorner$ для
+любой формулы $\alpha(x)$. Тогда $D$ представима в формальной арифметике.
+
+\textbf{Теорема} Если расширение Ф.А. $\mathcal{S}$ непротиворечиво и $D$ представима в нём, то $\text{Д}_\mathcal{S}$ невыразимо в $\mathcal{S}$
+
+%TODO написать доказательство 
+\begin{proof}Пусть $\delta(a,p)$ представляет $D$, и пусть $\sigma(x)$ выражает множество $\text{Д}_\mathcal{S}$ (рассматриваемое как
+    одноместное отношение).
+    
+    Пусть $\alpha(x) := \forall p.\delta(x,p)\rightarrow\neg\sigma(p)$. Верно ли, что $\ulcorner\alpha\urcorner\in\text{Д}_\mathcal{S}$?
+\end{proof}
+
+(\textbf{Неразрешимость Ф.А.}) Если формальная арифметика непротиворечива, то формальная арифметика неразрешима
+
+\begin{proof}
+    Пусть формальная арифметика разрешима. 
+    Значит, есть рекурсивная функция $f(x)$: $f(x)=1$ тогда и только тогда, 
+    когда $x \in \text{Д}_\text{Ф.А.}$. То есть, $\text{Д}_\text{Ф.А.}$ выразимо в формальной арифметике.
+    
+    По теореме о невыразимости доказуемости, 
+    $\text{Д}_\text{Ф.А.}$ невыразимо в формальной арифметике. Противоречие.
+\end{proof}
+
+(\textbf{Теорема Тарского})
+Не существует формулы $\varphi(x)$, что $\llbracket \varphi(\overline{x}) \rrbracket = \text{И}$ (в стандартной интерпретации) тогда и только
+тогда, когда $x \in \text{И}_\text{ФА}$.
+
+\begin{proof}
+    Пусть теория $\mathcal{S}$ --- формальная арифметика + аксиомы: все истинные в стандартной интерпретации формулы.
+    Очевидно, что $\text{Д}_\mathcal{S} = \text{И}_\mathcal{S} = \text{И}_\text{ФА}$. 
+    То есть $\text{И}_\text{ФА}$ невыразимо в $\mathcal{S}$.
+    
+    Пусть $\varphi$ таково, что $\llbracket\varphi(\overline{x})\rrbracket = \text{И}$ при $x \in \text{И}$.
+    Тогда $\vdash\varphi(\overline{x})$, если $x \in \text{И}$ и $\vdash\neg\varphi(\overline{x})$, если $x \notin\text{И}$.
+    
+    Тогда $\text{И}$ выразимо в $\mathcal{S}$. Противоречие.
+\end{proof}
+
+Однако, если взять $D = \mathbb{R}$, истина становится выразима (алгоритм Тарского).
 
 %%\section{ Теория множеств. Определения равенства. Парадокс брадобрея. Аксиоматика Цермело-Френкеля.
 %Конструктивные аксиомы (пустого, пары, объединения, множества подмножеств, выделения).
@@ -2650,11 +3265,11 @@ $$\begin{array}{ll}
     \end{dfn}
 
     \begin{thm}Пусть $N$ --- некоторый замкнутый лямбда-терм. Тогда найдётся выражение $M$, состоящее из комбинаторов $S$,$K$,
-    что $N =_\beta M$\end{thm}
+    что $N =_\beta M$\end{thm}\\
 
-    \begin{exm}\vspace{-0.8cm}
+    \begin{exm}
         $$I =_\beta S\ K\ K$$
-    \end{exm}\vspace{-0.3cm}
+    \end{exm}\vspace{-0.3cm}\\
     \begin{tabular}{ll}
         $K := \lambda x^\alpha.\lambda y^\beta.x$ & $\alpha\rightarrow\beta\rightarrow\alpha$\\
         $S := \lambda x^{\alpha\rightarrow\beta\rightarrow\gamma}.\lambda y^{\alpha\rightarrow\beta}.\lambda z^\alpha.x\ z\ (y\ z)$ & $(\alpha\rightarrow\beta\rightarrow\gamma)\rightarrow(\alpha\rightarrow\beta)\rightarrow\alpha\rightarrow\gamma$\\
