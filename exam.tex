@@ -1522,18 +1522,331 @@ $$a \cdot b = \left\{ \begin{array}{ll} 0, & \mbox{если } b = 0\\
 (14) & $a+0 = a\to a+0 = a \to a = a$ & (M.P. 12, 13)\\\pause
 (15) & $a+0 = a$ & (Акс. А5)\\
 (16) & $a+0 = a \to a = a$ & (M.P. 15, 14)\\
-(17) & $a = a$ & (M.P. 15, 16)
+(17) & $a = a$ & (M.P. 15, 16) 
 \end{tabular}
 
-%TODO формализация по Лейбницу
+\textbf{Арифметизация по Лейбницу}
 
-%\section{Примитивно-рекурсивные и рекурсивные функции.
-%Функции вычисления простых чисел. Частичный логарифм.
-%Выразимость отношений и представимость функций в формальной арифметике. Характеристические функции.
-%Функция Аккермана. Доказательство невозможности выражения функции Аккермана в примитивно-рекурсивных функциях.}
+Правила, по которым можно с помощью чисел судить о правильности выводов, о формах и модусах категорических силлогизмов (1679 г.)\end{center}
 
-%\section{Представимость примитивов $N$, $Z$, $U$, $S$. Бета-функция Гёделя.
-%Представимость $R$ и $M$, представимость рекурсивных функций в формальной арифметике.}
+\begin{itemize}
+\item Любой термин --- пара взаимно простых чисел $+a-b$. Например, мудрый --- $+70-33$, благочестивый --- $+10-3$.
+
+\item Общеутвердительное предложение (каждый $+a-b$ есть $+c-d$): $a \text{делится на} c$ и $b \text{делится на} d$.\\
+Всякий мудрый есть благочестивый ($70 = 10\cdot 7$, $33 = 3 \cdot 11$).
+
+\item Частноотрицательное предложение --- не верно общеутвердительное.
+
+\item Общеотрицательное предложение --- когда $a,d$ или $b,c$ имеют общий делитель, отличный от 1:\\
+Ни один благочестивый ($+10-3$) не есть несчастный ($+5-14$), так как $10=2 \cdot 5$ и $14 =2 \cdot 7$.
+
+\item Очевидно, силлогизм <<Barbara>> верен: $$\infer{e \text{делится на} c, f \text{делится на} d}{+a-b\text{ есть }+c-d\quad\quad+e-f\text{ есть }+a-b}$$
+
+\item Неправильный силлогизм может быть верен иногда, скажем, <<AOO>> из фигуры 3:\\Всякий благочестивый ($+10-3$) есть счастливый
+($+5-1$), некоторый благочестивый не есть богатый ($+8-11$), отсюда некоторый богатый не есть счастливый ($+8-11$ против $+5-1$).
+
+\item Но для некоторых пар всё равно следствие данного неправильного силлогизма нарушается: $+12-5$, $+4-1$, $+8-11$
+\end{itemize}
+
+\section{Примитивно-рекурсивные и рекурсивные функции.
+Функции вычисления простых чисел. Частичный логарифм.
+Выразимость отношений и представимость функций в формальной арифметике. Характеристические функции.
+Функция Аккермана. Доказательство невозможности выражения функции Аккермана в примитивно-рекурсивных функциях.}
+
+\textbf{Примитивы}
+
+\begin{enumerate}
+    \item Примитив <<Ноль>> ($Z$) \vspace{-0.3cm}
+    $$Z: \mathbb{N}_0\to\mathbb{N}_0,\ \ \ \ \ Z(x_1) = 0$$\vspace{-0.5cm}\pause
+    \item Примитив <<Инкремент>> ($N$) \vspace{-0.3cm}
+    $$N: \mathbb{N}_0\to\mathbb{N}_0,\ \ \ \ \ N(x_1) = x_1+1$$\vspace{-0.5cm}\pause
+    \item Примитив <<Проекция>> ($U$) — семейство функций; пусть $k,n \in \mathbb{N}_0, k \le n$\vspace{-0.3cm}
+    $$U^k_n: \mathbb{N}^n_0 \to \mathbb{N}_0,\ \ \ \ \ U^k_n(\overrightarrow{x}) = x_k$$\vspace{-0.5cm}\pause
+    \item Примитив <<Подстановка>> ($S$) --- семейство функций; пусть $g: \mathbb{N}^k_0 \to \mathbb{N}_0,\ \ f_1,\dots,f_k: \mathbb{N}^n_0 \to \mathbb{N}_0$
+     \vspace{-0.3cm}
+    $$S\langle g,f_1,f_2,\dots,f_k \rangle (\overrightarrow{x}) = g(f_1(\overrightarrow{x}),\dots,f_k(\overrightarrow{x}))$$
+    \item Примитив <<Примитивная рекурсия>> ($R$) --- семейство функций;
+    пусть $f: \mathbb{N}^n_0\to\mathbb{N}_0$ и $g: \mathbb{N}^{n+2}_0 \to\mathbb{N}_0$.
+    Тогда $R\langle f,g\rangle: \mathbb{N}^{n+1}_0\to\mathbb{N}_0$, причём
+    
+    $$R\langle f,g\rangle(\overrightarrow{x},y)=
+     \left\{\begin{array}{ll} 
+      f(\overrightarrow{x}), &y=0\\
+      g(\overrightarrow{x},y-1,R\langle f,g\rangle (\overrightarrow{x},y-1)), &y > 0
+    \end{array}\right.$$
+\end{enumerate}
+
+Функция $f$ --- \textbf{примитивно-рекурсивна}, если может быть
+выражена как композиция примитивов $Z$, $N$, $U$, $S$ и $R$.
+
+Функция --- \textbf{общерекурсивная}, если может быть построена при помощи
+примитивов $Z$, $N$, $U$, $S$, $R$ и примитива минимизации:
+$$M\langle f \rangle (x_1,x_2,\dots,x_n) = \min\{y: f(x_1,x_2,\dots,x_n,y) = 0\}$$
+Если $f(x_1,x_2,\dots,x_n,y) > 0$ при любом $y$, результат не определён.
+
+\textbf{Вычисление простых чисел}
+
+Обозначим $B(n)=2^{2^{\,n}}$ (примитивно-рекурсивная верхняя оценка для $p_n$).
+Пусть $\operatorname{rem}(x,y)=x\bmod y$ и $\operatorname{sg}(x)=\begin{cases}0,&x=0,\\1,&x>0\end{cases}$
+— примитивно-рекурсивны.
+
+\medskip
+\emph{Делимость и признак простоты.}
+\[
+\operatorname{Divides}(d,m)\;=\;1-\operatorname{sg}\big(\operatorname{rem}(m,d)\big)
+\qquad(\text{1 при }d\mid m,\ \ 0\text{ иначе}),
+\]
+\[
+S(m,t)=\sum_{d=2}^{t}\operatorname{Divides}(d,m)
+\quad\text{(сумма задаётся примитивной рекурсией)},
+\]
+\[
+\operatorname{HasDiv}(m,t)=\operatorname{sg}\big(S(m,t)\big)
+\quad(\text{1, если }\exists d\in[2,t]\ d\mid m).
+\]
+Тогда индикатор простоты
+\[
+\operatorname{IsPrime}(m)=\big(1-\operatorname{HasDiv}(m,m-1)\big)\cdot\operatorname{sg}(m-1),
+\]
+(равен $1$ именно для простых $m\ge2$).
+
+\medskip
+\emph{Накопитель по верхней границе.} Для фиксированного $n$ определим функцию
+$F(n,t)=(\count_t,\res_t,\flag_t)$ рекурсивно по $t$ ($t=0,\dots,B(n)$):
+\[
+F(n,0)=(0,0,0).
+\]
+Пусть $F(n,t)=(c,r,f)$. Обозначим $a=\operatorname{IsPrime}(t+1)$ и $c' = c+a$.
+Тогда
+\[
+F(n,t+1)=
+\begin{cases}
+(c',\,t+1,\,1), & \text{если }f=0,\ a=1,\ c'=n,\\
+(c',\,r,\,f),   & \text{иначе.}
+\end{cases}
+\]
+(В словах: при первом достижении счётчика равного $n$ запоминаем текущее простое в $r$ и ставим флаг.)
+
+Эта рекурсия по $t$ — примитивно-рекурсивна, поэтому композиции и проекции дают функцию
+\[
+\operatorname{nthPrime}(n)=U_2\big(F(n,B(n))\big),
+\]
+где $U_2$ — проекция на компоненту $\res$.
+
+\textbf{Частичный логарифм}
+
+Определим характеристику неделимости:
+\[
+\operatorname{Div}(n,m)=
+\begin{cases}
+0,& m\mid n,\\
+1,& m\nmid n.
+\end{cases}
+\]
+
+Пусть
+\[
+h(n,y)=\operatorname{Div}\bigl(n,\operatorname{pow}_k(y+1)\bigr).
+\]
+
+Тогда
+\[
+s(n)=M\,[\,h(n,y)=1\,], \qquad
+\operatorname{plog}_k(n)=s(n)-1.
+\]
+
+
+Запись вида $\psi(\theta_1,\dots,\theta_n)$ означает
+$\psi[x_1:=\theta_1,\dots,x_n:=\theta_n]$
+
+Литерал числа
+
+$$\overline{a} = \left\{\begin{array}{ll} 0, &\mbox{если } a = 0\\
+                (\overline{b})', &\mbox{если } a = b+1
+\end{array}\right.$$
+
+Будем говорить, что отношение $R\subseteq \mathbb{N}^n_0$ \textbf{выразимо} в ФА, 
+если существует формула $\rho$, что:
+\begin{enumerate}
+\item если $\langle a_1,\dots,a_n \rangle \in R$, то $\vdash \rho(\overline{a_1},\dots,\overline{a_n})$
+\item если $\langle a_1,\dots,a_n \rangle \notin R$, то $\vdash \neg\rho(\overline{a_1},\dots,\overline{a_n})$
+\end{enumerate}
+
+Будем говорить, что функция $f: \mathbb{N}^n_0\to\mathbb{N}_0$ \textbf{представима} в ФА, 
+если существует формула $\varphi$, что:
+\begin{enumerate}
+\item если $f(a_1,\dots,a_n) = u$, то $\vdash \varphi(\overline{a_1},\dots,\overline{a_n},\overline{u})$
+\item если $f(a_1,\dots,a_n) \ne u$, то $\vdash \neg\varphi(\overline{a_1},\dots,\overline{a_n},\overline{u})$
+\item для всех $a_i \in \mathbb{N}_0$ выполнено $\vdash (\exists x.\varphi(\overline{a_1},\dots,\overline{a_n},x)) \with 
+   (\forall p.\forall q.\varphi(\overline{a_1},\dots,\overline{a_n},p)\with \varphi(\overline{a_1},\dots,\overline{a_n},q)\rightarrow p=q)$
+\end{enumerate}
+
+\textbf{Функция Аккермана}
+$$A(m,n) = \left\{\begin{array}{ll}
+  n+1,&m = 0\\
+  A(m-1,1),&m > 0, n = 0\\
+  A(m-1,A(m,n-1)),&m > 0, n > 0
+\end{array}\right.$$
+
+Лемма о росте функции Аккермана
+
+\begin{enumerate}
+    \item $A(p,q) = A^{(q+1)}(p-1,1)$
+    \item $A^{(x+2)}(k,x) < A(k+2,x)$
+    \end{enumerate}
+
+    \begin{proof}
+        \begin{enumerate}
+        \item $A(p,q) = A(p-1,A(p,q-1)) = \dots = A(p-1,A(p-1,\dots A(p,0)) = A^{(q)}(p-1,A(p,0)) = A^{(q+1)}(p-1,1)$
+        
+        \item
+        %$\alpha_{m+2}(n) = \alpha_{m+1}^{n+1}(1) = \alpha_{m+1}(\alpha_{m+1}^n(1)) =
+        %\alpha_m^{\alpha_{m+1}^n(1)+1}(1) = \alpha_m^{\alpha_{m+2}(n-1)+1}(1)
+        %\ge \alpha_m^{\alpha_2(n-1)+1}(1) = \alpha_m^{2(n-1)+3+1}(1) =
+        % \alpha_m^{n+n+2}(1) = \alpha_m^{n+2} (\alpha_m^{n}(1))$
+        
+        $A(k+2,x) = A(k+1,A(k+2,x-1)) = A^{(A(k+2,x-1)+1)}(k,1) \ge A^{(A(2,x-1)+1)}(k,1) = A^{(2(x-1)+3+1)}(k,1)
+        = A^{(2x+2)}(k,1) = A^{(x+2)}(k,A^{(x)}(k,1)) \ge A^{(x+2)}(k,A^{(x)}(0,1)) = A^{(x+2)}(k,x+1) > A^{(x+2)}(k,x)$
+        
+        \end{enumerate}
+        \end{proof}
+
+\textbf{Функция Аккермана не примитивно-рекурсивна}        
+
+Пусть $f(\overrightarrow{x})$ --- примитивно-рекурсивная.
+Тогда найдётся $k$, что $f(\overrightarrow{x}) < A(k,\max(\overrightarrow{x}))$
+\begin{proof}
+    Индукция по структуре $f$.
+    \begin{enumerate}
+    \item $f = Z$, тогда $k = 0$, т.к. $A(0,x) = x+1 > Z(x) = 0$;
+    \item $f = N$, тогда $k = 1$, т.к. $A(1,x) = x + 2 > N(x) = x+1$;
+    \item $f = U^n_s$, тогда $k = 0$, т.к. $f(\overrightarrow{x}) \le \max(\overrightarrow{x}) < A(0,\max(\overrightarrow{x}))$;
+    \item $f = S\langle g,h_1,\dots,h_n\rangle$, тогда $k = k_g + \max(k_{h_1},\dots,k_{h_n}) + 2$;
+    %f(\overrightarrow{x}) < A(k_f,\max(\overrightarrow{x}))$, $h_t(\overrightarrow{x}) < A(k_{h_t},\max(\overrightarrow{x}))$.
+    %Пусть $k = \max(k_g,k_{h_1},\dots,k_{h_n})+2$;
+     %$S\langle g,h_1,\dots,h_n\rangle < A(k_g, A(\max (\overrightarrow{k_h}), \max({\overrightarrow{x}))) = A^{(\max)}$
+    \item $f = R\langle g,h \rangle$, тогда $k = \max(k_g,k_h)+2$. %$R\langle g,h\rangle(x,v) = g^{[v]}(h(x)) < A(k_g,A(\dots A(k_g,A(k_h,x)))) \le A(x \ $
+    % < A(k_g,A(\dots A(k_g,A(k_h,max(\overrightarrow{x},y))))) 
+    %\le A^{(y}$
+    \end{enumerate}
+\end{proof}
+
+\textbf{Оценка для R}
+
+Пусть $f = R\langle g,h \rangle$. Тогда при $k = \max(k_g,k_h)+2$ выполнено $f(\overrightarrow{x},y) \le A^{(y+1)}(k-2,\max(\overrightarrow{x},y))$.
+
+\begin{proof}
+
+    Индукция по $y$.
+    \begin{itemize}
+    \item База: $y = 0$. Тогда: $f(\overrightarrow{x},0) = g(\overrightarrow{x}) \le 
+    A(k_g,\max(\overrightarrow{x})) \le A^{(1)}(k-2,\max(\overrightarrow{x},0))$.
+    
+    \item Переход: пусть $f(\overrightarrow{x},y) \le A^{(y+1)}(k-2,\max(\overrightarrow{x},y))$.
+    Тогда $f(\overrightarrow{x},y+1) = h(\overrightarrow{x},y,f(\overrightarrow{x},y))
+    \le A(k_h,\max(\overrightarrow{x},y,f(\overrightarrow{x},y))) 
+    \le A(k_h,\max(\overrightarrow{x},y,A^{(y+1)}(k-2,\max(\overrightarrow{x},y))) = A(k_h,A^{(y+1)}(k-2,\max(\overrightarrow{x},y)))
+    \le A^{(y+2)}(k-2,\max(\overrightarrow{x},y+1))$
+    
+    %\le \alpha^{y+2}_{K-2}(\max(\overrightarrow{x},y)))\le$$
+    \end{itemize}
+    \vspace{-0.3cm}
+    \end{proof}
+
+    Заметим, что $A^{(y+1)}(k-2,\max(\overrightarrow{x},y)) \le
+A^{(\max(\overrightarrow{x},y)+1)}(k-2,\max(\overrightarrow{x},y)) \le
+ A^{(\max(\overrightarrow{x},y)+2)}(k-2,\max(\overrightarrow{x},y)) <
+A(k,\max(\overrightarrow{x},y))$
+
+\textbf{Тезис Чёрча для общерекурсивных функций}:
+
+любая эффективно-вычислимая функция $\mathbb{N}^k_0\to\mathbb{N}_0$ является общерекурсивной.
+
+\section{Представимость примитивов $N$, $Z$, $U$, $S$. Бета-функция Гёделя.
+Представимость $R$ и $M$, представимость рекурсивных функций в формальной арифметике.}
+
+\textbf{Примитивы $Z$, $N$ и $U^k_n$ представимы в Ф.А.}
+
+\begin{proof}
+    \begin{itemize}\pause
+    \item $\zeta(x_1,x_2) := x_2=0$, \pause формальнее: $\zeta(x_1,x_2) := x_1=x_1 \with x_2=0$\pause
+    \item $\nu(x_1,x_2) := x_2=x_1'$\pause
+    \item $\upsilon(x_1,\dots,x_n,x_{n+1}) := x_k = x_{n+1}$ \pause \vspace{0.1cm}
+    
+    формальнее: 
+         $\upsilon(x_1,\dots,x_n,x_{n+1}) := (\underset{i\ne k,n+1}{\with} x_i=x_i) \with x_k = x_{n+1}$
+    \end{itemize}
+\end{proof}
+
+Пусть функции $f,g_1,\dots,g_k$ представимы в Ф.А. Тогда $S\langle f,g_1,\dots,g_k \rangle$ представима в Ф.А.
+
+\begin{proof}
+    Пусть $f$, $g_1$, ..., $g_k$ представляются формулами $\varphi$, $\gamma_1$, ..., $\gamma_k$. \pause
+    
+    Тогда 
+    $S\langle f,g_1,\dots,g_k\rangle$ будет представлена формулой
+    $$\exists g_1.\dots.\exists g_k.\varphi(g_1,\dots,g_k,x_{n+1})\with\gamma_1(x_1,\dots,x_n,g_1)\with\dots\with\gamma_k(x_1,\dots,x_n,g_k)$$
+\end{proof}
+
+\textbf{Бета-функция Геделя}
+
+Задача: закодировать последовательность натуральных чисел произвольной длины.
+$\beta$-функция Гёделя: $\mathcal{\beta}(b,c,i) := b \% (1 + (i+1) \cdot c)$\\
+Здесь (\%) --- остаток от деления.
+\end{dfn}\pause
+\begin{thm}$\beta$-функция Гёделя представима в Ф.А. формулой
+$$\hat{\beta}(b,c,i,d) := \exists q.(b = q \cdot (1 + c \cdot (i+1)) + d) \& (d < 1 + c \cdot (i+1))$$
+
+Китайская теорема об остатках (вариант формулировки): если $u_0, \dots, u_n$ --- попарно 
+взаимно просты, и $0 \le a_i < u_i$, то существует такой $b$, что $a_i = b \% u_i$.
+
+\begin{proof}
+    Положим $c = \max(a_0,\dots,a_n,n)!$ и $u_i = 1+c\cdot(i+1)$.\pause
+    \begin{itemize}
+    \item $\text{НОД}(u_i,u_j) = 1$, если $i \ne j$.\pause
+    
+    Пусть $p$ --- простое, $u_i\divisible p$ и $u_j\divisible p$ ($i < j$). \pause
+    Заметим, что $u_j-u_i = c \cdot (j-i)$. Значит, $c\divisible p$ или $(j-i)\divisible p$. \pause
+    Так как $j-i \le n$, то $c \divisible (j-i)$, потому если и $(j-i)\divisible p$, всё равно $c \divisible p$. \pause
+    Но и $(1+c\cdot(i+1))\divisible p$, отсюда $1 \divisible p$ --- что невозможно. \pause
+    \item $0 \le a_i < u_i$.\pause
+    \end{itemize}
+    Условия китайской теоремы об остатках выполнены и найдётся $b$, что \vspace{-0.2cm}
+    $$a_i = b \% (1 + c\cdot(i+1)) = \beta(b,c,i)$$
+
+\end{proof}
+
+\textbf{Примитив <<примитивная рекурсия>> представим в Ф.А.}
+
+Пусть $f: \mathbb{N}^n_0\to\mathbb{N}_0$ и $g:\mathbb{N}^{n+2}_0\to\mathbb{N}_0$ представлены формулами $\varphi$ и $\gamma$. 
+
+Зафиксируем $x_1, \dots, x_n, y \in \mathbb{N}_0$.\pause\vspace{0.3cm}
+
+\begin{tabular}{lll}
+Шаг вычисления & Об. & Утверждение в Ф.А.\\
+$R\langle f,g\rangle (x_1,\dots,x_n,0) = f(x_1,\dots,x_n)$ & $a_0$ & $\vdash \varphi(\overline{x_1},\dots,\overline{x_n},\overline{a_0})$\\ \pause
+$R\langle f,g\rangle (x_1,\dots,x_n,1) = g(x_1,\dots,x_n,0,a_0)$ & $a_1$ & $\vdash \gamma(\overline{x_1},\dots,\overline{x_n},0,\overline{a_0},\overline{a_1})$\\ \pause
+$\dots$\\
+$R\langle f,g\rangle (x_1,\dots,x_n,y) = g(x_1,\dots,x_n,y-1,a_{y-1})$ & $a_y$ & $\vdash \gamma(\overline{x_1},\dots,\overline{x_n},\overline{y-1},\overline{a_{y-1}},\overline{a_y})$
+\end{tabular}\pause\vspace{0.3cm}
+
+По свойству $\beta$-функции, найдутся $b$ и $c$, что
+$\beta (b,c,i) = a_i$ для $0 \le i \le y$.\pause
+
+Примитив $R\langle f,g\rangle$ представим в Ф.А. формулой $\rho(x_1,\dots,x_n,y,a)$:\vspace{-0.1cm}
+$$\begin{array}{l}\exists b. \exists c. (\exists a_0. \hat{\beta} (b,c,0,a_0) \& \varphi (x_1,...x_n, a_0)) \\
+       \&\;\;\;\;\forall k.k < y \rightarrow \exists d . \exists e . \hat{\beta} (b,c,k,d) \& \hat{\beta} (b,c,k',e) \& \gamma (x_1,..x_n,k,d,e) \\
+       \&\;\;\;\;\hat{\beta} (b,c,y,a) 
+\end{array}$$
+
+
+Пусть функция $f:\mathbb{N}^{n+1}_0 \to \mathbb{N}_0$ представима в Ф.А.
+формулой $\varphi(x_1,\dots,x_{n},y,r)$. Тогда \textbf{примитив $M\langle f\rangle$ представим в Ф.А.} 
+формулой $$\mu(x_1,\dots,x_n,y) := \varphi(x_1,\dots,x_n,y,0) \with \forall u.u < y \to \neg\varphi(x_1,\dots,x_n,u,0)$$
+
+\textbf{Если $f$ --- рекурсивная функция, то она представимав Ф.А.}
+\begin{proof}Индукция по структуре $f$.
+\end{proof}
 
 \section{Гёделева нумерация. Рекурсивность представимых в формальной арифметике функций.
 Функции $W_1$ и $W_2$, их представления $\omega_1$, $\omega_2$, самоприменимость.}
@@ -2302,7 +2615,13 @@ $1 + \omega = \omega$, $\omega + 1 \ne \omega$.
 
     \section{Аксиома выбора, альтернативные формулировки (лемма Цорна, теорема Цермело, существование
     частичной обратной), доказательство переходов (кроме доказательства леммы Цорна).}
-%TODO: добавить определение дизъюнктного множества
+
+    \begin{dfn}Дизъюнктное (разделённое) множество --- множество, элементы которого
+        не пересекаются. 
+        $$Dj(x) \equiv \forall y.\forall z.(y \in x \with z \in x \with \neg y=z) \rightarrow 
+        \neg \exists t.t \in y \with t \in z$$
+        \end{dfn}
+
     \begin{axm}[выбора]
 Из любого семейства дизъюнктных непустых множеств $\mathcal{A}$ можно выбрать непустую трансверсаль ---
 множество $S$, что $|S \cap A| = 1$ для каждого $A\in\mathcal{A}$. Иначе, $S \in \times \mathcal{A}$.
